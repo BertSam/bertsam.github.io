@@ -147,6 +147,24 @@ Please enter a 3-line text below:
     });
   }
 
+  // Touch Event Handlers
+  function handleTouchStart(e) {
+    dragSrcEl = this;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+  }
+
+  function handleTouchMove(e) {
+    e.preventDefault();
+  }
+
+  function handleTouchEnd(e) {
+    if (dragSrcEl != this) {
+      dragSrcEl.innerHTML = this.innerHTML;
+      this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+  }
+
   var draggableDivs = document.querySelectorAll('.draggable');
   draggableDivs.forEach(function (div) {
     div.addEventListener('dragstart', handleDragStart, false);
@@ -155,6 +173,9 @@ Please enter a 3-line text below:
     div.addEventListener('dragleave', handleDragLeave, false);
     div.addEventListener('drop', handleDrop, false);
     div.addEventListener('dragend', handleDragEnd, false);
+    div.addEventListener('touchstart', handleTouchStart, false);
+    div.addEventListener('touchmove', handleTouchMove, false);
+    div.addEventListener('touchend', handleTouchEnd, false);
   });
 
 
