@@ -1,29 +1,285 @@
 ---
 layout: post
-title:  "Rédigez votre haiku"
-date:   2023-09-05 10:10:25 -0400
-categories: jekyll update
+title: Character Frequency Counter
 ---
-You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.
 
-Jekyll requires blog post files to be named according to the following format:
 
-`YEAR-MONTH-DAY-title.MARKUP`
 
-Where `YEAR` is a four-digit number, `MONTH` and `DAY` are both two-digit numbers, and `MARKUP` is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.
+<!-- HTML for Editable Dictionary -->
+<h2>Editable Dictionary:</h2>
+<table id="editableDictionary">
+  <tr>
+    <th>Letter</th>
+    <th>Decimal Value</th>
+    <th>Required Bits</th>
+    <th>Binary Value</th>
+  </tr>
+</table>
 
-Jekyll also offers powerful support for code snippets:
+<!-- HTML for Character Frequency Counter -->
+# Character Frequency Counter
+Please enter a 3-line text below:
 
-{% highlight ruby %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
-{% endhighlight %}
+<form id="charFrequencyForm">
+  <textarea name="user_text" rows="3" cols="40"></textarea>
+  <br>
+  <input type="submit" value="Submit">
+</form>
 
-Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
+<div id="charFrequencyResult" style="display: none;">
+  <h2>You Entered:</h2>
+  <p id="enteredText"></p>
 
-[jekyll-docs]: https://jekyllrb.com/docs/home
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-talk]: https://talk.jekyllrb.com/
+  <h2>Character Frequency:</h2>
+  <div id="sortOptions">
+    <label for="sortType">Sort by:</label>
+    <select id="sortType">
+      <option value="appearance">Appearance (Original Order)</option>
+      <option value="frequencyAsc">Frequency (Ascending)</option>
+      <option value="frequencyDesc">Frequency (Descending)</option>
+    </select>
+  </div>
+  <table id="charFrequencyTable">
+    <tr>
+      <th>Character</th>
+      <th>Frequency</th>
+      <th>Required Bits</th>
+    </tr>
+  </table>
+</div>
+
+
+
+<!-- JavaScript for Character Frequency Counter -->
+<script>
+
+ // Get the default placement data from the Alphabet Dictionary
+  var defaultPlacementData = [
+    { letter: "a", decimal: 0, bits: 1, binary: "0" },
+    { letter: "b", decimal: 1, bits: 1, binary: "1" },
+    { letter: "c", decimal: 2, bits: 2, binary: "10" },
+    { letter: "d", decimal: 3, bits: 2, binary: "11" },
+    { letter: "e", decimal: 4, bits: 3, binary: "100" },
+    { letter: "f", decimal: 5, bits: 3, binary: "101" },
+    { letter: "g", decimal: 6, bits: 3, binary: "110" },
+    { letter: "h", decimal: 7, bits: 3, binary: "111" },
+    { letter: "i", decimal: 8, bits: 4, binary: "1000" },
+    { letter: "j", decimal: 9, bits: 4, binary: "1001" },
+    { letter: "k", decimal: 10, bits: 4, binary: "1010" },
+    { letter: "l", decimal: 11, bits: 4, binary: "1011" },
+    { letter: "m", decimal: 12, bits: 4, binary: "1100" },
+    { letter: "n", decimal: 13, bits: 4, binary: "1101" },
+    { letter: "o", decimal: 14, bits: 4, binary: "1110" },
+    { letter: "p", decimal: 15, bits: 4, binary: "1111" },
+    { letter: "q", decimal: 16, bits: 5, binary: "10000" },
+    { letter: "r", decimal: 17, bits: 5, binary: "10001" },
+    { letter: "s", decimal: 18, bits: 5, binary: "10010" },
+    { letter: "t", decimal: 19, bits: 5, binary: "10011" },
+    { letter: "u", decimal: 20, bits: 5, binary: "10100" },
+    { letter: "v", decimal: 21, bits: 5, binary: "10101" },
+    { letter: "w", decimal: 22, bits: 5, binary: "10110" },
+    { letter: "x", decimal: 23, bits: 5, binary: "10111" },
+    { letter: "y", decimal: 24, bits: 5, binary: "11000" },
+    { letter: "z", decimal: 25, bits: 5, binary: "11001" },
+  ];
+
+  // Function to populate the editable dictionary
+  function populateEditableDictionary() {
+    var editableDictionary = document.getElementById("editableDictionary");
+
+    for (var i = 0; i < defaultPlacementData.length; i++) {
+      var row = editableDictionary.insertRow(-1);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+      cell1.innerHTML = `<div class='draggable' draggable='true'>${defaultPlacementData[i].letter}</div>`;
+      cell2.textContent = defaultPlacementData[i].decimal;
+      cell3.textContent = defaultPlacementData[i].bits;
+      cell4.textContent = defaultPlacementData[i].binary;
+    }
+  }
+
+  // Call the function to populate the editable dictionary
+  populateEditableDictionary();
+
+  var dragSrcEl = null;
+
+  function handleDragStart(e) {
+    dragSrcEl = this;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+  }
+
+  function handleDragOver(e) {
+    if (e.preventDefault) {
+      e.preventDefault(); // Necessary to allow drop
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+  }
+
+  function handleDragEnter(e) {
+    this.classList.add('over');
+  }
+
+  function handleDragLeave(e) {
+    this.classList.remove('over');
+  }
+
+  function handleDrop(e) {
+    if (e.stopPropagation) {
+      e.stopPropagation(); // Stops some browsers from redirecting.
+    }
+
+    if (dragSrcEl != this) {
+      dragSrcEl.innerHTML = this.innerHTML;
+      this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+
+    return false;
+  }
+
+  function handleDragEnd(e) {
+    var draggableDivs = document.querySelectorAll('.draggable');
+    draggableDivs.forEach(function (div) {
+      div.classList.remove('over');
+    });
+  }
+
+  var draggableDivs = document.querySelectorAll('.draggable');
+  draggableDivs.forEach(function (div) {
+    div.addEventListener('dragstart', handleDragStart, false);
+    div.addEventListener('dragenter', handleDragEnter, false);
+    div.addEventListener('dragover', handleDragOver, false);
+    div.addEventListener('dragleave', handleDragLeave, false);
+    div.addEventListener('drop', handleDrop, false);
+    div.addEventListener('dragend', handleDragEnd, false);
+  });
+
+
+  document.getElementById("charFrequencyForm").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the form from submitting and reloading the page
+
+    var userText = document.querySelector("[name='user_text']").value;
+    var formattedUserText = userText.replace(/\n/g, "<br>"); // Replace newline characters with <br> tags
+    document.getElementById("enteredText").innerHTML = formattedUserText;
+
+    var cleanedText = userText.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
+    var charCount = {};
+
+    for (var i = 0; i < cleanedText.length; i++) {
+      var char = cleanedText[i];
+      if (!charCount[char]) {
+        charCount[char] = 1;
+      } else {
+        charCount[char]++;
+      }
+    }
+
+function findRowTextByLetter(letter) {
+  var editableDictionary = document.getElementById("editableDictionary");
+  var rows = editableDictionary.rows;
+
+  for (var i = 1; i < rows.length; i++) {
+    var currentLetter = rows[i].cells[0].textContent.trim();
+    if (currentLetter === letter) {
+      // Create an array to hold cell text content
+      var rowText = [];
+      rowText.push(rows[i].cells[2].textContent.trim());
+  
+      // Join the cell text content with a separator (e.g., space)
+      return rowText.join(' ');
+    }
+  }
+
+  // If the letter is not found, return null
+  return null;
+}
+
+    var charFrequencyTable = document.getElementById("charFrequencyTable");
+    charFrequencyTable.innerHTML = "<tr><th>Character</th><th>Frequency</th><th>Required Bits</th></tr>"; // Clear and set column headers
+
+    for (var char in charCount) {
+      var row = charFrequencyTable.insertRow(-1);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      cell1.textContent = char;
+      cell2.textContent = charCount[char];
+      cell3.textContent = findRowTextByLetter(char);
+      
+    }
+
+    // Show the result container
+    document.getElementById("charFrequencyResult").style.display = "block";
+
+    // Sort the table based on the selected option
+    var sortType = document.getElementById("sortType").value;
+    sortTable(charFrequencyTable, sortType);
+  });
+
+  function sortTable(table, sortType) {
+    var rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+      for (i = 1; i < rows.length - 1; i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("TD")[0];
+        y = rows[i + 1].getElementsByTagName("TD")[0];
+        switch (sortType) {
+          case "appearance":
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+            }
+            break;
+          case "frequencyAsc":
+            if (parseInt(x.nextElementSibling.innerHTML) > parseInt(y.nextElementSibling.innerHTML)) {
+              shouldSwitch = true;
+            }
+            break;
+          case "frequencyDesc":
+            if (parseInt(x.nextElementSibling.innerHTML) < parseInt(y.nextElementSibling.innerHTML)) {
+              shouldSwitch = true;
+            }
+            break;
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        }
+      }
+    }
+  }
+
+  // Listen for changes to the sort type select element
+  document.getElementById("sortType").addEventListener("change", function () {
+    var charFrequencyTable = document.getElementById("charFrequencyTable");
+    var sortType = document.getElementById("sortType").value;
+    sortTable(charFrequencyTable, sortType);
+  });
+
+ 
+</script>
+
+<style>
+  .draggable {
+    width: 30px;
+    height: 30px;
+    background-color: #f2f2f2;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: move;
+  }
+
+  #editableDictionary th {
+    text-align: center;
+  }
+
+  #editableDictionary .over {
+    background-color: #e9f7fe;
+  }
+</style>
