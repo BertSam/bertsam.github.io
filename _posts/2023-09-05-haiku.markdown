@@ -3,8 +3,6 @@ layout: post
 title: Character Frequency Counter
 ---
 
-
-
 <!-- HTML for Editable Dictionary -->
 <h2>Editable Dictionary:</h2>
 <table id="editableDictionary">
@@ -17,7 +15,7 @@ title: Character Frequency Counter
 </table>
 
 <!-- HTML for Character Frequency Counter -->
-# Character Frequency Counter
+<h2>Character Frequency Counter</h2>
 Please enter a 3-line text below:
 
 <form id="charFrequencyForm">
@@ -48,11 +46,10 @@ Please enter a 3-line text below:
   </table>
 </div>
 
-
-
 <!-- JavaScript for Character Frequency Counter -->
 <script>
 
+  // Get the default placement data from the Alphabet Dictionary
  // Get the default placement data from the Alphabet Dictionary
   var defaultPlacementData = [
     { letter: "a", decimal: 0, bits: 1, binary: "0" },
@@ -147,6 +144,16 @@ Please enter a 3-line text below:
     });
   }
 
+  var draggableDivs = document.querySelectorAll('.draggable');
+  draggableDivs.forEach(function (div) {
+    div.addEventListener('dragstart', handleDragStart, false);
+    div.addEventListener('dragenter', handleDragEnter, false);
+    div.addEventListener('dragover', handleDragOver, false);
+    div.addEventListener('dragleave', handleDragLeave, false);
+    div.addEventListener('drop', handleDrop, false);
+    div.addEventListener('dragend', handleDragEnd, false);
+  });
+
   // Touch Event Handlers
   function handleTouchStart(e) {
     dragSrcEl = this;
@@ -165,19 +172,12 @@ Please enter a 3-line text below:
     }
   }
 
-  var draggableDivs = document.querySelectorAll('.draggable');
+  // Attach Touch Event Listeners
   draggableDivs.forEach(function (div) {
-    div.addEventListener('dragstart', handleDragStart, false);
-    div.addEventListener('dragenter', handleDragEnter, false);
-    div.addEventListener('dragover', handleDragOver, false);
-    div.addEventListener('dragleave', handleDragLeave, false);
-    div.addEventListener('drop', handleDrop, false);
-    div.addEventListener('dragend', handleDragEnd, false);
     div.addEventListener('touchstart', handleTouchStart, false);
     div.addEventListener('touchmove', handleTouchMove, false);
     div.addEventListener('touchend', handleTouchEnd, false);
   });
-
 
   document.getElementById("charFrequencyForm").addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the form from submitting and reloading the page
@@ -198,25 +198,25 @@ Please enter a 3-line text below:
       }
     }
 
-function findRowTextByLetter(letter) {
-  var editableDictionary = document.getElementById("editableDictionary");
-  var rows = editableDictionary.rows;
+    function findRowTextByLetter(letter) {
+      var editableDictionary = document.getElementById("editableDictionary");
+      var rows = editableDictionary.rows;
 
-  for (var i = 1; i < rows.length; i++) {
-    var currentLetter = rows[i].cells[0].textContent.trim();
-    if (currentLetter === letter) {
-      // Create an array to hold cell text content
-      var rowText = [];
-      rowText.push(rows[i].cells[2].textContent.trim());
-  
-      // Join the cell text content with a separator (e.g., space)
-      return rowText.join(' ');
+      for (var i = 1; i < rows.length; i++) {
+        var currentLetter = rows[i].cells[0].textContent.trim();
+        if (currentLetter === letter) {
+          // Create an array to hold cell text content
+          var rowText = [];
+          rowText.push(rows[i].cells[2].textContent.trim());
+
+          // Join the cell text content with a separator (e.g., space)
+          return rowText.join(' ');
+        }
+      }
+
+      // If the letter is not found, return null
+      return null;
     }
-  }
-
-  // If the letter is not found, return null
-  return null;
-}
 
     var charFrequencyTable = document.getElementById("charFrequencyTable");
     charFrequencyTable.innerHTML = "<tr><th>Character</th><th>Frequency</th><th>Required Bits</th></tr>"; // Clear and set column headers
@@ -229,7 +229,7 @@ function findRowTextByLetter(letter) {
       cell1.textContent = char;
       cell2.textContent = charCount[char];
       cell3.textContent = findRowTextByLetter(char);
-      
+
     }
 
     // Show the result container
@@ -282,7 +282,6 @@ function findRowTextByLetter(letter) {
     sortTable(charFrequencyTable, sortType);
   });
 
- 
 </script>
 
 <style>
