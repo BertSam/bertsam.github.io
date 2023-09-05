@@ -154,35 +154,32 @@ Please enter a 3-line text below:
     div.addEventListener('dragend', handleDragEnd, false);
   });
 
-  // Touch Event Handlers
-  function handleTouchStart(e) {
-    dragSrcEl = e.target;
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', e.target.innerHTML);
-  }
+// Touch Event Handlers
+function handleTouchStart(e) {
+  dragSrcEl = e.target;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', e.target.innerHTML);
+}
 
-  function handleTouchMove(e) {
-    e.preventDefault();
-  }
+function handleTouchMove(e) {
+  e.preventDefault();
+}
 
-  function handleTouchEnd(e) {
-    if (dragSrcEl != e.target) {
-      dragSrcEl.innerHTML = e.target.innerHTML;
-      e.target.innerHTML = e.dataTransfer.getData('text/html');
-    }
+function handleTouchEnd(e) {
+  if (dragSrcEl != e.target) {
+    dragSrcEl.innerHTML = e.target.innerHTML;
+    e.target.innerHTML = e.dataTransfer.getData('text/html');
   }
+}
 
-  // Attach Touch Event Listeners
-  draggableDivs.forEach(function (div) {
-    div.setAttribute('draggable', 'true');
-    div.addEventListener('mousedown', handleDragStart, false); // Mouse Event
-    div.addEventListener('touchstart', handleTouchStart, false); // Touch Event
-    div.addEventListener('dragstart', function (e) {
-      e.preventDefault(); // Prevent dragstart for touch events
-    }, false);
-    div.addEventListener('touchmove', handleTouchMove, false); // Touch Event
-    div.addEventListener('touchend', handleTouchEnd, false); // Touch Event
-  });
+// Attach Touch Event Listeners
+draggableDivs.forEach(function (div) {
+  div.setAttribute('draggable', 'true');
+  div.addEventListener('mousedown', handleDragStart, false); // Mouse Event
+  div.addEventListener('touchstart', handleTouchStart, false); // Touch Event
+  div.addEventListener('touchmove', handleTouchMove, false); // Touch Event
+  div.addEventListener('touchend', handleTouchEnd, false); // Touch Event
+});
 
   document.getElementById("charFrequencyForm").addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the form from submitting and reloading the page
