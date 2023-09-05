@@ -174,10 +174,14 @@ Please enter a 3-line text below:
 
   // Attach Touch Event Listeners
   draggableDivs.forEach(function (div) {
-    div.setAttribute('draggable', 'true'); // Add this line to enable touch dragging
-    div.addEventListener('touchstart', handleTouchStart, false);
-    div.addEventListener('touchmove', handleTouchMove, false);
-    div.addEventListener('touchend', handleTouchEnd, false);
+    div.setAttribute('draggable', 'true');
+    div.addEventListener('mousedown', handleDragStart, false); // Mouse Event
+    div.addEventListener('touchstart', handleTouchStart, false); // Touch Event
+    div.addEventListener('dragstart', function (e) {
+      e.preventDefault(); // Prevent dragstart for touch events
+    }, false);
+    div.addEventListener('touchmove', handleTouchMove, false); // Touch Event
+    div.addEventListener('touchend', handleTouchEnd, false); // Touch Event
   });
 
   document.getElementById("charFrequencyForm").addEventListener("submit", function (event) {
