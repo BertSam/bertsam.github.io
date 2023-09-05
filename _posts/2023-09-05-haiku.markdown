@@ -156,9 +156,9 @@ Please enter a 3-line text below:
 
   // Touch Event Handlers
   function handleTouchStart(e) {
-    dragSrcEl = this;
+    dragSrcEl = e.target;
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.innerHTML);
+    e.dataTransfer.setData('text/html', e.target.innerHTML);
   }
 
   function handleTouchMove(e) {
@@ -166,14 +166,15 @@ Please enter a 3-line text below:
   }
 
   function handleTouchEnd(e) {
-    if (dragSrcEl != this) {
-      dragSrcEl.innerHTML = this.innerHTML;
-      this.innerHTML = e.dataTransfer.getData('text/html');
+    if (dragSrcEl != e.target) {
+      dragSrcEl.innerHTML = e.target.innerHTML;
+      e.target.innerHTML = e.dataTransfer.getData('text/html');
     }
   }
 
   // Attach Touch Event Listeners
   draggableDivs.forEach(function (div) {
+    div.setAttribute('draggable', 'true'); // Add this line to enable touch dragging
     div.addEventListener('touchstart', handleTouchStart, false);
     div.addEventListener('touchmove', handleTouchMove, false);
     div.addEventListener('touchend', handleTouchEnd, false);
