@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Welcome to Jekyll!"
+title:  "Rédigez votre haiku"
 date:   2023-09-05 10:10:25 -0400
 categories: jekyll update
 ---
