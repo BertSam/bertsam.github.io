@@ -49,8 +49,6 @@ Please enter a 3-line text below:
 <!-- JavaScript for Character Frequency Counter -->
 <script>
 
-  // Get the default placement data from the Alphabet Dictionary
- // Get the default placement data from the Alphabet Dictionary
   var defaultPlacementData = [
     { letter: "a", decimal: 0, bits: 1, binary: "0" },
     { letter: "b", decimal: 1, bits: 1, binary: "1" },
@@ -154,32 +152,32 @@ Please enter a 3-line text below:
     div.addEventListener('dragend', handleDragEnd, false);
   });
 
-// Touch Event Handlers
-function handleTouchStart(e) {
-  dragSrcEl = e.target;
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/html', e.target.innerHTML);
-}
-
-function handleTouchMove(e) {
-  e.preventDefault();
-}
-
-function handleTouchEnd(e) {
-  if (dragSrcEl != e.target) {
-    dragSrcEl.innerHTML = e.target.innerHTML;
-    e.target.innerHTML = e.dataTransfer.getData('text/html');
+  // Touch Event Handlers
+  function handleTouchStart(e) {
+    dragSrcEl = this;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
   }
-}
 
-// Attach Touch Event Listeners
-draggableDivs.forEach(function (div) {
-  div.setAttribute('draggable', 'true');
-  div.addEventListener('mousedown', handleDragStart, false); // Mouse Event
-  div.addEventListener('touchstart', handleTouchStart, false); // Touch Event
-  div.addEventListener('touchmove', handleTouchMove, false); // Touch Event
-  div.addEventListener('touchend', handleTouchEnd, false); // Touch Event
-});
+  function handleTouchMove(e) {
+    e.preventDefault();
+  }
+
+  function handleTouchEnd(e) {
+    if (dragSrcEl != this) {
+      dragSrcEl.innerHTML = this.innerHTML;
+      this.innerHTML = e.dataTransfer.getData('text/html');
+    }
+  }
+
+  // Attach Touch Event Listeners
+  draggableDivs.forEach(function (div) {
+    div.setAttribute('draggable', 'true');
+    div.addEventListener('mousedown', handleDragStart, false); // Mouse Event
+    div.addEventListener('touchstart', handleTouchStart, false); // Touch Event
+    div.addEventListener('touchmove', handleTouchMove, false); // Touch Event
+    div.addEventListener('touchend', handleTouchEnd, false); // Touch Event
+  });
 
   document.getElementById("charFrequencyForm").addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the form from submitting and reloading the page
@@ -231,7 +229,6 @@ draggableDivs.forEach(function (div) {
       cell1.textContent = char;
       cell2.textContent = charCount[char];
       cell3.textContent = findRowTextByLetter(char);
-
     }
 
     // Show the result container
@@ -295,13 +292,10 @@ draggableDivs.forEach(function (div) {
     font-size: 20px;
     font-weight: bold;
     cursor: move;
+    user-select: none;
   }
 
   #editableDictionary th {
     text-align: center;
-  }
-
-  #editableDictionary .over {
-    background-color: #e9f7fe;
   }
 </style>
